@@ -6,11 +6,14 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody rigidbody;
     [SerializeField] private CapsuleCollider collider;
+    [SerializeField] private GameObject swordObject;
 
     private Vector3 MoveVec => new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
     private bool PushedJumpButton => Input.GetKeyDown(KeyCode.Space);
+    private bool PushedWeaponButton => Input.GetKeyDown(KeyCode.E);
 
     private bool InMidAre => !CheckIsGround();
+    private bool UsingSword;
 
     private readonly Vector3 JumpPower = new Vector3(0, 10f, 0);
     private readonly int groundLayerMask = 1 << 6;
@@ -28,6 +31,14 @@ public class PlayerController : MonoBehaviour
         LookAtMoveDirectin();
         if (PushedJumpButton)
             Jump();
+
+        if (PushedWeaponButton)
+        {
+            if (UsingSword)
+                RemoveSowrd();
+            else
+                UseSword();
+        }
     }
 
     private void Move()
@@ -53,5 +64,17 @@ public class PlayerController : MonoBehaviour
         Ray ray = new Ray(centerPos, Vector3.down);
 
         return Physics.SphereCast(ray, radius, 0.01f, groundLayerMask);
+    }
+
+    private void UseSword()
+    {
+        swordObject.SetActive(true);
+        UsingSword = true;
+    }
+
+    private void RemoveSowrd()
+    {
+        swordObject.SetActive(false);
+        UsingSword = false;
     }
 }
