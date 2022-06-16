@@ -5,11 +5,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody rigidbody;
+    [SerializeField] private CapsuleCollider collider;
 
     private Vector3 MoveVec => new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
     private bool PushedJumpButton => Input.GetKeyDown(KeyCode.Space);
 
+    private bool InMidAre => !CheckIsGround();
+
     private readonly Vector3 JumpPower = new Vector3(0, 10f, 0);
+    private readonly int groundLayerMask = 1 << 6;
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +42,16 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        if (InMidAre) return;
         rigidbody.AddForce(JumpPower, ForceMode.Impulse);
+    }
+
+    private bool CheckIsGround()
+    {
+        Vector3 centerPos = transform.position + new Vector3(0, collider.radius, 0);
+        float radius = collider.radius - 0.01f;
+        Ray ray = new Ray(centerPos, Vector3.down);
+
+        return Physics.SphereCast(ray, radius, 0.01f, groundLayerMask);
     }
 }
