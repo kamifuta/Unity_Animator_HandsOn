@@ -17,11 +17,17 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();   
+        Move();
+        LookAtMoveDirectin();
     }
 
     private void Move()
     {
         rigidbody.velocity = MoveVec;
+    }
+
+    private void LookAtMoveDirectin()
+    {
+        transform.LookAt(transform.position + rigidbody.velocity);
     }
 }
