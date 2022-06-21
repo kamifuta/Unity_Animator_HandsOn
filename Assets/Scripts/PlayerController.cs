@@ -11,9 +11,13 @@ public class PlayerController : MonoBehaviour
     private Vector3 MoveVec => new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
     private bool PushedJumpButton => Input.GetKeyDown(KeyCode.Space);
     private bool PushedWeaponButton => Input.GetKeyDown(KeyCode.E);
+    private bool PushingDashButton => Input.GetKey(KeyCode.LeftShift);
 
     private bool InMidAre => !CheckIsGround();
     private bool UsingSword;
+
+    private const float WalkSpeed = 1f;
+    private const float DashSpeed = 1.5f;
 
     private readonly Vector3 JumpPower = new Vector3(0, 10f, 0);
     private readonly int groundLayerMask = 1 << 6;
@@ -43,11 +47,13 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        rigidbody.velocity = MoveVec;
+        var moveSpeed = PushingDashButton ? DashSpeed : WalkSpeed;
+        rigidbody.velocity = MoveVec * moveSpeed;
     }
 
     private void LookAtMoveDirectin()
     {
+        if (!PushingDashButton) return;
         transform.LookAt(transform.position + rigidbody.velocity);
     }
 
