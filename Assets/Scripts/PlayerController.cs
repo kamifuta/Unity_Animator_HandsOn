@@ -7,34 +7,35 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody rigidbody;
     [SerializeField] private CapsuleCollider collider;
     [SerializeField] private GameObject swordObject;
+    [SerializeField] private Animator animator;
 
     private Vector3 MoveVec => new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
     private bool PushedJumpButton => Input.GetKeyDown(KeyCode.Space);
+    private bool PushingJumpButton => Input.GetKey(KeyCode.Space);
     private bool PushedWeaponButton => Input.GetKeyDown(KeyCode.E);
     private bool PushingDashButton => Input.GetKey(KeyCode.LeftShift);
 
-    private bool InMidAre => !CheckIsGround();
+    private bool InMidAir => !CheckIsGround();
     private bool UsingSword;
+    private bool IsJumpAnimation => animator.GetCurrentAnimatorStateInfo(1).IsTag("Jump");
 
     private const float WalkSpeed = 1f;
     private const float DashSpeed = 1.5f;
+    private const float BaseJumpPower = 10f;
 
-    private readonly Vector3 JumpPower = new Vector3(0, 10f, 0);
     private readonly int groundLayerMask = 1 << 6;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
     {
         Move();
+        PlayMoveAnimation();
         LookAtMoveDirectin();
-        if (PushedJumpButton)
-            Jump();
+        if (!PushingDashButton)
+            LookAtDefaultDirection();
+
+        if (PushedJumpButton && !IsJumpAnimation)
+            StartCoroutine(JumpCoroutine());
 
         if (PushedWeaponButton)
         {
@@ -47,20 +48,76 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
+        if (Mathf.Approximately(Vector3.Magnitude(MoveVec), 0))
+        {
+            StopWalkAnimation();
+            return;
+        }
+
         var moveSpeed = PushingDashButton ? DashSpeed : WalkSpeed;
-        rigidbody.velocity = MoveVec * moveSpeed;
+        var moveVec = MoveVec * moveSpeed;
+        if (InMidAir)
+            moveVec.y = rigidbody.velocity.y;
+        rigidbody.velocity = moveVec;
+        PlayWalkAnimation();
+    }
+
+    private void PlayWalkAnimation()
+    {
+        animator.SetBool("IsWalking", true);
+    }
+
+    private void StopWalkAnimation()
+    {
+        animator.SetBool("IsWalking", false);
+    }
+
+    private void PlayMoveAnimation()
+    {
+        animator.SetBool("Dash", PushingDashButton);
+
+        animator.SetFloat("MoveFront", rigidbody.velocity.z);
+        animator.SetFloat("MoveRight", rigidbody.velocity.x);
     }
 
     private void LookAtMoveDirectin()
     {
         if (!PushingDashButton) return;
-        transform.LookAt(transform.position + rigidbody.velocity);
+        var lookDir = rigidbody.velocity;
+        lookDir.y = 0;
+        transform.LookAt(transform.position + lookDir);
     }
 
-    private void Jump()
+    private void LookAtDefaultDirection()
     {
-        if (InMidAre) return;
-        rigidbody.AddForce(JumpPower, ForceMode.Impulse);
+        transform.LookAt(transform.position+Vector3.forward);
+    }
+
+    private IEnumerator JumpCoroutine()
+    {
+        float time = 0;
+        while (true)
+        {
+            yield return null;
+            time += Time.deltaTime;
+            if (!PushingJumpButton) break;
+            if (time >= 0.5f) break;
+        }
+
+        Jump(time);
+    }
+
+    private void Jump(float jumpPowerRate)
+    {
+        if (InMidAir) return;
+        rigidbody.AddForce(Vector3.up*jumpPowerRate*BaseJumpPower, ForceMode.Impulse);
+        PlayJumpAnimation(jumpPowerRate);
+    }
+
+    private void PlayJumpAnimation(float jumpPowerRate)
+    {
+        animator.SetTrigger("Jump");
+        animator.SetFloat("JumpPower", jumpPowerRate);
     }
 
     private bool CheckIsGround()
