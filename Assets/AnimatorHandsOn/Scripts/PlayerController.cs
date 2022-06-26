@@ -64,20 +64,20 @@ public class PlayerController : MonoBehaviour
 
     private void PlayWalkAnimation()
     {
-        animator.SetBool("IsWalking", true);
+        //animator.SetBool("IsWalking", true);
     }
 
     private void StopWalkAnimation()
     {
-        animator.SetBool("IsWalking", false);
+        //animator.SetBool("IsWalking", false);
     }
 
     private void PlayMoveAnimation()
     {
-        animator.SetBool("Dash", PushingDashButton);
+        //animator.SetBool("Dash", PushingDashButton);
 
-        animator.SetFloat("MoveFront", rigidbody.velocity.z);
-        animator.SetFloat("MoveRight", rigidbody.velocity.x);
+        //animator.SetFloat("MoveFront", rigidbody.velocity.z);
+        //animator.SetFloat("MoveRight", rigidbody.velocity.x);
     }
 
     private void LookAtMoveDirectin()
@@ -116,8 +116,8 @@ public class PlayerController : MonoBehaviour
 
     private void PlayJumpAnimation(float jumpPowerRate)
     {
-        animator.SetTrigger("Jump");
-        animator.SetFloat("JumpPower", jumpPowerRate);
+        //animator.SetTrigger("Jump");
+        //animator.SetFloat("JumpPower", jumpPowerRate);
     }
 
     private bool CheckIsGround()
