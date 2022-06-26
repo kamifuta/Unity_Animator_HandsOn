@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     private bool InMidAir => !CheckIsGround();
     private bool UsingSword;
-    private bool IsJumpAnimation => animator.GetCurrentAnimatorStateInfo(1).IsTag("Jump");
+    //private bool IsJumpAnimation => animator.GetCurrentAnimatorStateInfo(1).IsTag("Jump");
 
     private const float WalkSpeed = 1f;
     private const float DashSpeed = 1.5f;
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
         if (!PushingDashButton)
             LookAtDefaultDirection();
 
-        if (PushedJumpButton && !IsJumpAnimation)
+        if (PushedJumpButton /*&& !IsJumpAnimation*/)
             StartCoroutine(JumpCoroutine());
 
         if (PushedWeaponButton)
