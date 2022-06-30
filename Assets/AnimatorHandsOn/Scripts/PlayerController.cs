@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     private bool PushingDashButton => Input.GetKey(KeyCode.LeftShift);
 
     private bool InMidAir => !CheckIsGround();
-    private bool UsingSword;
+    private bool UsingWeapon;
     private bool IsJumpAnimation => animator.GetCurrentAnimatorStateInfo(1).IsTag("Jump");
 
     private const float WalkSpeed = 1f;
@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
 
         if (PushedWeaponButton)
         {
-            if (UsingSword)
+            if (UsingWeapon)
                 RemoveSowrd();
             else
                 UseSword();
@@ -64,12 +64,12 @@ public class PlayerController : MonoBehaviour
 
     private void PlayWalkAnimation()
     {
-        animator.SetBool("IsWalking", true);
+        //animator.SetBool("IsWalking", true);
     }
 
     private void StopWalkAnimation()
     {
-        animator.SetBool("IsWalking", false);
+        //animator.SetBool("IsWalking", false);
     }
 
     private void PlayMoveAnimation()
@@ -132,12 +132,14 @@ public class PlayerController : MonoBehaviour
     private void UseSword()
     {
         swordObject.SetActive(true);
-        UsingSword = true;
+        animator.SetBool("UsingWeapon", true);
+        UsingWeapon = true;
     }
 
     private void RemoveSowrd()
     {
         swordObject.SetActive(false);
-        UsingSword = false;
+        animator.SetBool("UsingWeapon", false);
+        UsingWeapon = false;
     }
 }
