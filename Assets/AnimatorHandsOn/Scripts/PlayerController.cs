@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject swordObject;
     [SerializeField] private Animator animator;
 
+    [SerializeField] private AnimationCurve curve;
+
     private Vector3 MoveVec => new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
     private bool PushedJumpButton => Input.GetKeyDown(KeyCode.Space);
     private bool PushingJumpButton => Input.GetKey(KeyCode.Space);
@@ -16,7 +18,7 @@ public class PlayerController : MonoBehaviour
     private bool PushingDashButton => Input.GetKey(KeyCode.LeftShift);
 
     private bool InMidAir => !CheckIsGround();
-    private bool UsingSword;
+    private bool UsingWeapon;
     private bool IsJumpAnimation => animator.GetCurrentAnimatorStateInfo(0).IsTag("Jump");
 
     private const float WalkSpeed = 1f;
@@ -39,7 +41,7 @@ public class PlayerController : MonoBehaviour
 
         if (PushedWeaponButton)
         {
-            if (UsingSword)
+            if (UsingWeapon)
                 RemoveSowrd();
             else
                 UseSword();
@@ -132,12 +134,19 @@ public class PlayerController : MonoBehaviour
     private void UseSword()
     {
         swordObject.SetActive(true);
-        UsingSword = true;
+        animator.SetBool("UsingWeapon", true);
+        UsingWeapon = true;
     }
 
     private void RemoveSowrd()
     {
         swordObject.SetActive(false);
-        UsingSword = false;
+        animator.SetBool("UsingWeapon", false);
+        UsingWeapon = false;
+    }
+
+    public void PrintJump()
+    {
+        Debug.Log("ƒWƒƒƒ“ƒv‚µ‚½");
     }
 }
