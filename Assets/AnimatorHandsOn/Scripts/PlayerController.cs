@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     private bool InMidAir => !CheckIsGround();
     private bool UsingSword;
-    //private bool IsJumpAnimation => animator.GetCurrentAnimatorStateInfo(1).IsTag("Jump");
+    private bool IsJumpAnimation => animator.GetCurrentAnimatorStateInfo(0).IsTag("Jump");
 
     private const float WalkSpeed = 1f;
     private const float DashSpeed = 1.5f;
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
         if (!PushingDashButton)
             LookAtDefaultDirection();
 
-        if (PushedJumpButton /*&& !IsJumpAnimation*/)
+        if (PushedJumpButton && !IsJumpAnimation)
             StartCoroutine(JumpCoroutine());
 
         if (PushedWeaponButton)
@@ -74,10 +74,10 @@ public class PlayerController : MonoBehaviour
 
     private void PlayMoveAnimation()
     {
-        //animator.SetBool("Dash", PushingDashButton);
+        animator.SetBool("Dash", PushingDashButton);
 
-        //animator.SetFloat("MoveFront", rigidbody.velocity.z);
-        //animator.SetFloat("MoveRight", rigidbody.velocity.x);
+        animator.SetFloat("MoveFront", rigidbody.velocity.z);
+        animator.SetFloat("MoveRight", rigidbody.velocity.x);
     }
 
     private void LookAtMoveDirectin()
@@ -116,8 +116,8 @@ public class PlayerController : MonoBehaviour
 
     private void PlayJumpAnimation(float jumpPowerRate)
     {
-        //animator.SetTrigger("Jump");
-        //animator.SetFloat("JumpPower", jumpPowerRate);
+        animator.SetTrigger("Jump");
+        animator.SetFloat("JumpPower", jumpPowerRate);
     }
 
     private bool CheckIsGround()
